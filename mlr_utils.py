@@ -332,6 +332,12 @@ def repeated_k_fold(x_train:pd.DataFrame, y_train:pd.DataFrame, k:int = 3, n:int
         y_measured_list[repeat].extend(y_train.iloc[test_index])
         y_predictions_list[repeat].extend(y_predictions)
 
+        #Print the train/test splits of the fold and its R2
+        print(f"Fold {i}:")
+        print(f"  Train: index={train_index}")
+        print(f"  Test:  index={test_index}")
+        print(f"  R^2: {metrics.r2_score(y_train.iloc[test_index], y_predictions)}")
+
     # Calculate the R^2 scores for each repeat
     r2_scores = [metrics.r2_score(y_measured_list[repeat],y_predictions_list[repeat]) for repeat in range(n)]
 
@@ -364,8 +370,8 @@ def external_r2(y_test_measured,y_test_predicted,y_train):
 def plot_MLR_model(y_train:list, y_predictions_train:list, y_validate:list, y_predictions_validate:list,
                    loo_predictions:list = [], y_test:list = [], y_predictions_test:list = [],
                    display_legend:bool = True, output_label:str = "Output",
-                   plot_size:tuple = (5,5), manual_limits:tuple[tuple,tuple] = (None,None), plot_xy:bool = False,
-                   training_color:str = "black", validate_color:str = "#BE0000", test_color:str = "#008090"):
+                   plot_size:tuple = (6,6), manual_limits:tuple[tuple,tuple] = (None,None), plot_xy:bool = False,
+                   training_color:str = "#679BF0", validate_color:str = "#F0841F", test_color:str = "#49BE47"):
     '''
     Plots the measured vs. predicted values for the training and validation sets, as well as the leave-one-out predictions and test set if provided.
     
@@ -398,7 +404,11 @@ def plot_MLR_model(y_train:list, y_predictions_train:list, y_validate:list, y_pr
     
     # Set plot limits
     if manual_limits[0] is None:
-        all_values = list(chain(y_train, y_predictions_train, y_test, y_predictions_test, loo_predictions, y_validate, y_predictions_validate))
+        # If no manual limits are provided, calculate the limits based on the data
+        all_items = [y_train, y_predictions_train, y_test, y_predictions_test, loo_predictions]
+        if len(y_validate) > 0:                                         #control for no validation set
+            all_items.extend([y_validate, y_predictions_validate])
+        all_values = list(chain(*all_items))
         max_value = max(all_values)
         min_value = min(all_values)
         delta = 0.04 * (max_value - min_value)
