@@ -1,0 +1,17 @@
+name: InteractivePlots
+channels:
+- rdkit
+- conda-forge
+- defaults
+- districtdatalabs
+dependencies:
+- python=3.12
+- holoviews
+- pandas
+- matplotlib
+- rdkit
+- colorcet
+- scipy
+- scikit-learn
+- openpyxl
+- yellowbrick
